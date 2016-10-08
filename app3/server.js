@@ -105,44 +105,19 @@ app.get('/mongofind', function(req, res) {
 
 // setInterval(function() {
 // app.get('/mongoupdate', function(req, res) {
-// function updateFields() {
-//     MongoClient.connect(url, function(err, db) {
-//         if (err) {
-//             console.log("Connection Mongo failed: ", err);
-//         // } else if (bay == '') {
-//         //     console.log("No bay specified.");
-//         } else {
-//             console.log("MongoUpdate: Connection established to: ", url);
-//             // var collectionNames = ['bay001', 'bay002', 'bay003'];
-//             // db.listCollections().toArray(function(err, collections) {
-//             //     collectionNames = JSON.parse(JSON.stringify(collections));
-//             // });
-//             // for (i = 0; i < collectionNames.length; i++) {
-//             var collection = db.collection(master);
-//             collection.updateMany({
-//                 store: {
-//                     $exists: false
-//                 }
-//             }, {
-//                 $set: {
-//                     store: 'Woolworths'
-//                 }
-//             });
-//             console.log("Updated fields.");
-//         };
-//         db.close();
-//     });
-// };
-    // res.end();
-// });
-// }, 5000);
-
-app.get('/mongosend', function(req, res) {
+function updateFields() {
     MongoClient.connect(url, function(err, db) {
         if (err) {
             console.log("Connection Mongo failed: ", err);
+        // } else if (bay == '') {
+        //     console.log("No bay specified.");
         } else {
-            console.log("MongoSend: Connection established to: ", url);
+            console.log("MongoUpdate: Connection established to: ", url);
+            // var collectionNames = ['bay001', 'bay002', 'bay003'];
+            // db.listCollections().toArray(function(err, collections) {
+            //     collectionNames = JSON.parse(JSON.stringify(collections));
+            // });
+            // for (i = 0; i < collectionNames.length; i++) {
             var collection = db.collection(master);
             collection.updateMany({
                 store: {
@@ -154,6 +129,32 @@ app.get('/mongosend', function(req, res) {
                 }
             });
             console.log("Updated fields.");
+        };
+        db.close();
+    });
+};
+    // res.end();
+// });
+// }, 5000);
+
+app.get('/mongosend', function(req, res) {
+    updateFields();
+    MongoClient.connect(url, function(err, db) {
+        if (err) {
+            console.log("Connection Mongo failed: ", err);
+        } else {
+            console.log("MongoSend: Connection established to: ", url);
+            var collection = db.collection(master);
+            // collection.updateMany({
+            //     store: {
+            //         $exists: false
+            //     }
+            // }, {
+            //     $set: {
+            //         store: 'Woolworths'
+            //     }
+            // });
+            // console.log("Updated fields.");
             collection.find({
                 outtime: {
                 $ne: 'x'
