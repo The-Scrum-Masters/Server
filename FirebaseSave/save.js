@@ -47,23 +47,23 @@ router.route('/save').post(function(req, res) {
 	//This assumes the body of the text will have the transactions
 	// req.body.transactions is the array of transactions from the mongoDB
 	// sent here.
-	if (!validateJSON(req.transactions))
-	{
+	//if (!validateJSON(req.transactions))
+	//{
 		//the JSON isn't valid or some records have missing fields
-		console.log("The JSON recieved has missing fields:");
-		console.log(req.transactions);
-		res.status(400).send({ error: 'Some of the transactions were missing required fields,'+
-									  'Refer to: https://gist.github.com/rayoz12/1487b66f0da4321e18713cc68a2f5475'});
-		return;
-	}
+	//	console.log("The JSON recieved has missing fields:");
+	//	console.log(req.transactions);
+	//	res.status(400).send({ error: 'Some of the transactions were missing required fields,'+
+	//								  'Refer to: https://gist.github.com/rayoz12/1487b66f0da4321e18713cc68a2f5475'});
+	//	return;
+	//}
 	
 	for (i=0;i < req.body.transactions.length;i++)
 	{
-		StoreRef = db.ref(req.body.transactions[i].store);
+		//StoreRef = db.ref(req.body.transactions[i].store);
 		//delete store attribute, so it doesn't get saved in firebase.
-		delete req.body.transactions[i].store;
+		//delete req.body.transactions[i].store;
 		//delete _id, which is a remenant of mongodb. 
-		delete req.body.transactions[i]._id;
+		//delete req.body.transactions[i]._id;
 		console.log(req.body.transactions[i]);
 		//console.log(typeof req.body.transactions[i]);
 		StoreRef.push().set(req.body.transactions[i]);
