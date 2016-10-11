@@ -2,10 +2,10 @@ var express = require('express'),
     app = express(),
     mongodb = require('mongodb'),
     MongoClient = mongodb.MongoClient
-    url = 'mongodb://localhost:27017/app3DB',
-    master = 'master',
+    url = 'mongodb://testuser:password@ds041924.mlab.com:41924/store',
+    ultimo = 'ultimo',
     httptools = require('./httptools'),
-    ipport = ':8080';
+    ipport = process.env.PORT || 3000;
 
 app.get('/mongoadd', function(req, res) {
         MongoClient.connect(url, function(err, db) {
@@ -13,7 +13,7 @@ app.get('/mongoadd', function(req, res) {
                 console.log("Connection Mongo failed: ", err);
             } else {
                 console.log("MongoAdd: Connection established to: ", url);
-                var collection = db.collection(master);
+                var collection = db.collection(ultimo);
                 var trolley1 = {
                     trollid: 'hello',
                     intime: '',
@@ -53,7 +53,7 @@ app.get('/mongoadd', function(req, res) {
                     if (err) {
                         console.log("Error: ", err);
                     } else {
-                        console.log("Inserted trolleys into the " + master + " collection.");
+                        console.log("Inserted trolleys into the " + ultimo + " collection.");
                     }
                     db.close();
                 });
@@ -69,7 +69,7 @@ app.get('/mongofind', function(req, res) {
             console.log("Connection Mongo failed: ", err);
         } else {
             console.log("MongoFind: Connection established to: ", url);
-            var collection = db.collection(master);
+            var collection = db.collection(ultimo);
             collection.find({}).toArray(function(err, data) {
                 if (err) {
                     console.log("Error: ", err);
@@ -91,7 +91,7 @@ function updateFields() {
             console.log("Connection Mongo failed: ", err);
         } else {
             console.log("MongoUpdate: Connection established to: ", url);
-            var collection = db.collection(master);
+            var collection = db.collection(ultimo);
             collection.updateMany({
                 store: {
                     $exists: false
@@ -115,7 +115,7 @@ app.get('/mongosend', function(req, res) {
             console.log("Connection Mongo failed: ", err);
         } else {
             console.log("MongoSend: Connection established to: ", url);
-            var collection = db.collection(master);
+            var collection = db.collection(ultimo);
             collection.find({
                 outtime: {
                 $ne: 'x'
@@ -149,7 +149,7 @@ app.get('/mongodelete', function(req, res) {
             console.log("Connection Mongo failed: ", err);
         } else {
             console.log("MongoDelete: Connection established to: ", url);
-            var collection = db.collection(master);
+            var collection = db.collection(ultimo);
             collection.remove({});
             console.log("Removed all trolleys");
         };
@@ -158,7 +158,7 @@ app.get('/mongodelete', function(req, res) {
     res.end();
 });
 
-var server = app.listen(8081, function () {
+var server = app.listen(ipport, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log("App2 listening at http://%s:%s", host, port);
