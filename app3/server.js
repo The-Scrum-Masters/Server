@@ -2,9 +2,9 @@ var express = require('express'),
     app = express(),
     mongodb = require('mongodb'),
     MongoClient = mongodb.MongoClient,
-    url = 'mongodb://localhost:27017/app3DB',
+    url = 'mongodb://localhost:27017/store',
     ipport = '172.19.127.119:8080',
-    master = 'master',
+    master = 'ultimo',
     request = require('request');
 
 app.get('/mongoadd', function(req, res) {
@@ -15,36 +15,43 @@ app.get('/mongoadd', function(req, res) {
                 console.log("MongoAdd: Connection established to: ", url);
                 var collection = db.collection(master);
                 var trolley1 = {
+                    bay: 'pear',
                     trollid: 'hello',
                     intime: '',
-                    outtime: 'good'
+                    outtime: 'x'
                 };
                 var trolley2 = {
+                    bay: 'banana',
                     trollid: 'my',
                     intime: '',
-                    outtime: 'help'
+                    outtime: 'x'
                 };
                 var trolley3 = {
+                    bay: 'apple',
                     trollid: 'name',
                     intime: '',
-                    outtime: 'goodtime'
+                    outtime: 'x'
                 };
                 var trolley4 = {
+                    bay: 'apple',
                     trollid: 'is',
                     intime: '',
-                    outtime: 'mytime'
+                    outtime: 'x'
                 };
                 var trolley5 = {
+                    bay: 'banana',
                     trollid: 'harambe',
                     intime: '',
                     outtime: 'yourtime'
                 };
                 var trolley6 = {
+                    bay: 'apple',
                     trollid: 'harambe',
                     intime: '',
                     outtime: 'x'
                 };
                 var trolley7 = {
+                    bay: 'pear',
                     trollid: 'harambe',
                     intime: '',
                     outtime: 'x'
@@ -55,9 +62,9 @@ app.get('/mongoadd', function(req, res) {
                     } else {
                         console.log("Inserted trolleys into the " + master + " collection.");
                     }
-                    db.close();
                 });
-            };
+            db.close();
+            }
         });
     res.end();
 });
@@ -76,10 +83,10 @@ app.get('/mongofind', function(req, res) {
                     console.log("Found: ", data);
                 } else {
                     console.log("No trolleys found");
-                };
-                db.close();
+                }
             });
-        };
+            db.close();
+        }
     });
     res.end();
 });
@@ -93,8 +100,8 @@ app.get('/mongodelete', function(req, res) {
             var collection = db.collection(master);
             collection.remove({});
             console.log("Removed all trolleys");
-        };
-        db.close();
+            db.close();
+        }
     });
     res.end();
 });
@@ -116,10 +123,10 @@ function updateFields() {
                 }
             });
             console.log("Updated fields.");
-        };
-        db.close();
+            db.close();
+        }
     });
-};
+}
 
 function sendData() {
     MongoClient.connect(url, function(err, db) {
@@ -141,17 +148,30 @@ function sendData() {
                     };
                     console.log("Sent: ", sendData);
                     httpReq('http://' + ipport + '/api/save', sendData);
-                };
+                }
             });
+            db.close();
+        }
+    });
+}
+
+function deleteData() {
+    MongoClient.connect(url, function(err, db) {
+        if (err) {
+            console.log("Connection Mongo failed: ", err);
+        } else {
+            console.log("MongoDelete: Connection established to: ", url);
+            var collection = db.collection(master);
             collection.remove({
                 outtime: {
                 $ne: 'x'
                 }
             });
             console.log("Removed sent trolley transactions from collection.");
-        };
+            db.close();
+        }
     });
-};
+}
 
 function httpReq(ip, JSONData) {
     request.post(
@@ -169,6 +189,7 @@ setInterval(function() {
 // app.get('/mongosend', function(req, res) {
     updateFields();
     sendData();
+    deleteData();
     // res.end();
 // });
 }, 20000);
