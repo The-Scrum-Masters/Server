@@ -2,9 +2,9 @@ var express = require('express'),
     app = express(),
     mongodb = require('mongodb'),
     MongoClient = mongodb.MongoClient,
-    url = 'mongodb://localhost:27017/store',
+    url = 'mongodb://localhost:27017/appDB',
     ipport = '172.19.127.119:8080',
-    master = 'ultimo',
+    master = 'master',
     request = require('request');
 
 app.get('/mongoadd', function(req, res) {
