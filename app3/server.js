@@ -1,11 +1,11 @@
 var express = require('express'),
     app = express(),
     mongodb = require('mongodb'),
-    MongoClient = mongodb.MongoClient
+    MongoClient = mongodb.MongoClient,
     url = 'mongodb://localhost:27017/app3DB',
+    ipport = '172.19.127.119:8080',
     master = 'master',
-    httptools = require('./httptools'),
-    ipport = ':8080';
+    request = require('request');
 
 app.get('/mongoadd', function(req, res) {
         MongoClient.connect(url, function(err, db) {
@@ -63,7 +63,6 @@ app.get('/mongoadd', function(req, res) {
 });
 
 app.get('/mongofind', function(req, res) {
-
     MongoClient.connect(url, function(err, db) {
         if (err) {
             console.log("Connection Mongo failed: ", err);
@@ -81,6 +80,21 @@ app.get('/mongofind', function(req, res) {
                 db.close();
             });
         };
+    });
+    res.end();
+});
+
+app.get('/mongodelete', function(req, res) {
+    MongoClient.connect(url, function(err, db) {
+        if (err) {
+            console.log("Connection Mongo failed: ", err);
+        } else {
+            console.log("MongoDelete: Connection established to: ", url);
+            var collection = db.collection(master);
+            collection.remove({});
+            console.log("Removed all trolleys");
+        };
+        db.close();
     });
     res.end();
 });
@@ -107,9 +121,7 @@ function updateFields() {
     });
 };
 
-// setInterval(function() {
-app.get('/mongosend', function(req, res) {
-    updateFields();
+function sendData() {
     MongoClient.connect(url, function(err, db) {
         if (err) {
             console.log("Connection Mongo failed: ", err);
@@ -128,7 +140,7 @@ app.get('/mongosend', function(req, res) {
                         transactions: data
                     };
                     console.log("Sent: ", sendData);
-                    httptools.post('http://' + ipport + '/api/save', sendData);
+                    httpReq('http://' + ipport + '/api/save', sendData);
                 };
             });
             collection.remove({
@@ -139,24 +151,27 @@ app.get('/mongosend', function(req, res) {
             console.log("Removed sent trolley transactions from collection.");
         };
     });
-    res.end();
-});
-// }, 5000);
+};
 
-app.get('/mongodelete', function(req, res) {
-    MongoClient.connect(url, function(err, db) {
-        if (err) {
-            console.log("Connection Mongo failed: ", err);
-        } else {
-            console.log("MongoDelete: Connection established to: ", url);
-            var collection = db.collection(master);
-            collection.remove({});
-            console.log("Removed all trolleys");
-        };
-        db.close();
-    });
-    res.end();
-});
+function httpReq(ip, JSONData) {
+    request.post(
+        ip,
+        { json: JSONData },
+        function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log("200 OK|" + body);
+            };
+        }
+    );
+};
+
+setInterval(function() {
+// app.get('/mongosend', function(req, res) {
+    updateFields();
+    sendData();
+    // res.end();
+// });
+}, 20000);
 
 var server = app.listen(8081, function () {
     var host = server.address().address;
