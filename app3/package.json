@@ -5,6 +5,7 @@
   "main": "mongo.js",
   "dependencies": {
     "express": "^4.14.0",
+    "firebase": "^3.5.2",
     "mongodb": "^2.2.10",
     "node-schedule": "^1.1.1",
     "readline": "^1.3.0",

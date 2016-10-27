@@ -2,10 +2,30 @@ var express = require('express'),
     app = express(),
     mongodb = require('mongodb'),
     MongoClient = mongodb.MongoClient,
-    url = 'mongodb://localhost:27017/appDB',
-    ipport = '172.19.127.119:8080',
+    url = 'mongodb://localhost:27017/app3DB',
+    ipport = '172.19.127.233:8080',
     master = 'master',
     request = require('request');
+
+var firebase = require('firebase');
+
+firebase.initializeApp({
+    serviceAccount: "TROLLEY-MANAGEMENTSYSTEM-76d0d4b457f7.json",
+    databaseURL: "https://trolley-managementsystem.firebaseio.com/"
+});
+
+var db = firebase.database();
+var StoreRef = db.ref("WOOLWORTHS");
+
+function sendFB(data) {
+    for (i=0;i < data.length;i++)
+    {
+        console.log(data[i]);
+        delete data[i]._id;
+        StoreRef.push().set(data[i]);
+    }
+    console.log("Saved Successfully");
+}
 
 app.get('/mongoadd', function(req, res) {
         MongoClient.connect(url, function(err, db) {
@@ -143,11 +163,8 @@ function sendData() {
                 if (err) {
                     console.log("Error: ", err);
                 } else {
-                    var sendData = {
-                        transactions: data
-                    };
-                    console.log("Sent: ", sendData);
-                    httpReq('http://' + ipport + '/api/save', sendData);
+                    console.log("Sent: ", data);
+                    sendFB(data);
                 }
             });
             db.close();
@@ -173,25 +190,10 @@ function deleteData() {
     });
 }
 
-function httpReq(ip, JSONData) {
-    request.post(
-        ip,
-        { json: JSONData },
-        function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log("200 OK|" + body);
-            };
-        }
-    );
-};
-
 setInterval(function() {
-// app.get('/mongosend', function(req, res) {
     updateFields();
     sendData();
     deleteData();
-    // res.end();
-// });
 }, 20000);
 
 var server = app.listen(8081, function () {
