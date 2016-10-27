@@ -10,7 +10,7 @@ var express = require('express'),
 var firebase = require('firebase');
 
 firebase.initializeApp({
-    serviceAccount: "TROLLEY-MANAGEMENTSYSTEM-76d0d4b457f7.json",
+    serviceAccount: "TROLLEY-MANAGEMENTSYSTEM-21213064b58a.json",
     databaseURL: "https://trolley-managementsystem.firebaseio.com/"
 });
 
