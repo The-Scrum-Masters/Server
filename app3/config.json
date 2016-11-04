@@ -1,0 +1,6 @@
+{
+    "url": "mongodb://localhost:27017/app3DB",
+    "collname": "master",
+    "serviceAcc": "TROLLEY-MANAGEMENTSYSTEM-21213064b58a.json",
+    "databaseURL": "https://trolley-managementsystem.firebaseio.com/"
+}
